@@ -117,9 +117,9 @@ function mapStateOnServer(state) {
 		title: { toString: function toString() {
 				return '<title ' + buildAttrsString(titleAttrs) + '>' + (0, _escapeHtml2.default)(reduceTitle(state) || '') + '</title>';
 			} },
-		scripts: { toString: renderTags('script', state.scripts, false) },
-		links: { toString: renderTags('link', state.links) },
-		metas: { toString: renderTags('meta', state.metas) }
+		scripts: { toString: renderTags('script', state.scripts || [], false) },
+		links: { toString: renderTags('link', state.links || []) },
+		metas: { toString: renderTags('meta', state.metas || []) }
 	};
 }
 
