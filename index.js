@@ -80,9 +80,9 @@ function mapStateOnServer(state) {
 	};
 	return {
 		title: { toString: () => `<title ${buildAttrsString(titleAttrs)}>${escapeHTML(reduceTitle(state) || '')}</title>` },
-		scripts: { toString: renderTags('script', state.scripts, false) },
-		links: { toString: renderTags('link', state.links) },
-		metas: { toString: renderTags('meta', state.metas) }
+		scripts: { toString: renderTags('script', state.scripts || [], false) },
+		links: { toString: renderTags('link', state.links || []) },
+		metas: { toString: renderTags('meta', state.metas || []) }
 	};
 }
 
