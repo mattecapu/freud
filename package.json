@@ -1,0 +1,64 @@
+{
+  "name": "react-freud",
+  "version": "1.0.1",
+  "description": "a dead-simple head manager for React applications",
+  "main": "index.es5.js",
+  "jsnext:main": "index.js",
+  "scripts": {
+    "pretest": "npm run build:test",
+    "test": "babel-node tests/server.jsx && http-server ./tests -a 127.0.0.1 -p 8080 -o -c-1 .",
+    "dev": "nodemon -V -x 'npm test' --ext js,jsx --ignore tests/test.js --ignore index.es5.js",
+    "build": "npm run build:main && npm run build:test",
+    "build:main": "babel index.js > index.es5.js",
+    "build:test": "browserify -t babelify tests/browser.jsx > tests/test.js",
+    "preversion": "npm run build",
+    "version": "git add . --all",
+    "postversion": "git push --follow-tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattecapu/freud.git"
+  },
+  "keywords": [
+    "freud",
+    "head",
+    "manager",
+    "react",
+    "side",
+    "effect",
+    "loading",
+    "client",
+    "script",
+    "stylesheets",
+    "require",
+    "server-side"
+  ],
+  "author": "Matteo Capucci <mattecapu@live.it>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mattecapu/freud/issues"
+  },
+  "homepage": "https://github.com/mattecapu/freud#readme",
+  "dependencies": {
+    "escape-html": "1.0.3",
+    "ramda": "0.22.1",
+    "react-side-effect": "1.0.2"
+  },
+  "peerDependencies": {
+    "react": "^15.3.1"
+  },
+  "devDependencies": {
+    "babel-cli": "6.11.4",
+    "babel-plugin-syntax-jsx": "6.13.0",
+    "babel-plugin-transform-object-rest-spread": "6.8.0",
+    "babel-plugin-transform-react-display-name": "6.8.0",
+    "babel-plugin-transform-react-jsx": "6.8.0",
+    "babel-preset-es2015": "6.13.2",
+    "babelify": "7.3.0",
+    "browserify": "13.1.0",
+    "http-server": "0.9.0",
+    "nodemon": "1.10.2",
+    "react": "^15.3.1",
+    "react-dom": "^15.3.1"
+  }
+}
