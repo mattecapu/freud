@@ -1,6 +1,6 @@
 index.es5.js
-test/index.html
-test/test.js
+tests/index.html
+tests/test.js
 
 node_modules
 npm-debug.log*
