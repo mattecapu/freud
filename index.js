@@ -103,6 +103,9 @@ function mapStateOnServer(state) {
 }
 
 function reducePropsToState(propsList) {
+	if (!propsList.length) {
+		return [];
+	}
 	return propsList.reduce((prev, next) => {
 		/* merge array attributes */
 		const arrays = {};
