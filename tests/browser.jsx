@@ -38,7 +38,6 @@ class Test extends React.PureComponent {
 
 				{this.state.step === 0 ? <button onClick={() => {Freud.sync()}}>{"sync head with sync()"}</button> : null}
 				{this.state.step === 1 ? <button onClick={this.handleClick}>{"sync head with syncHere=true"}</button> : null}
-				{this.state.step >= 2 ? <Freud syncHere={true} /> : null}
 			</div>
 		);
 	}
@@ -49,6 +48,10 @@ window.addEventListener(
 	() =>
 		ReactDOM.render(
 			<Test />,
-			document.getElementById('react-root')
+			document.getElementById('react-root'),
+			() => {
+				console.log('render');
+				Freud.sync();
+			}
 		)
 );

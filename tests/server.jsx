@@ -12,8 +12,10 @@ const pageContent = ReactDOM.renderToStaticMarkup(
 			title="How to bake cookies"
 			scripts={[{ src: 'test.js', type: 'application/javascript', defer: true }]}
 		/>
-		{"Also script.js is mounted both on server and client: should mount once"}
-		<Freud scripts={[{ src: 'script.js' }]} />
+
+		{"Also blue.css is mounted both on server and client: should mount once"}
+		<Freud links={[{ rel: 'stylesheet', href: 'blue.css' }]} />
+
 		<Freud
 			titleTemplate="Freud's corner | %s"
 			metas={[
