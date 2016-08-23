@@ -1,6 +1,6 @@
 {
   "name": "react-freud",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "a dead-simple head manager for React applications",
   "main": "index.es5.js",
   "jsnext:main": "index.js",

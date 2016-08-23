@@ -35,6 +35,7 @@ ReactDOM.render(
 		/>
 		<Mother />
 		<OEdipus />
+		<Freud syncHere={true} />
 	</main>
 );
 ```
@@ -52,12 +53,19 @@ It's just a normal component which renders to `null` but does some magic at rend
 
 * **`title`**: sets the title of the page.
 * **`defaultTitle`**: if no `title` is set, this becomes the title, otherwise it's overridden (low-precedence `title`).
-* **`titleTemplate`**: a format string where `%s` gets replaced by the `title` (in the example above, the page title will be *OEdipus news | Maybe two*)
+* **`titleTemplate`**: a format string where `%s` gets replaced by the `title` (in the example above, the page title will be *OEdipus news | Maybe two*).
 * **`links`**: an array of PJOs whom attributes will be set on `<link>` tags. **Arrays are not overridden but merged**, for instance in the above example Freud will add `vienna.css` and `thebes.css` (preserves order). However, if you add two identical objects (identical == deeply equal), Freud will only load one.
-* **`scripts`**: same semantics of `links`, but creates `<script>` tags
-* **`metas`**: same semantics of `links`, but creates `<meta>` tags
+* **`scripts`**: same semantics of `links`, but creates `<script>` tags.
+* **`metas`**: same semantics of `links`, but creates `<meta>` tags.
 
-It works out of the box with server-side rendering, using the amazing `rewind()` function to get the tags to put in your `head`.
+To do the actual modifications to `head` there are two options:
+* Use the **`syncHere`** attribute on a `Freud` tag (see example). When this component is rendered, the `head` state will be synced with all the options set **until now**. So use this only if you want to force some rendering or you are 100% sure this is the last `Freud` tag that is rendered
+* Use the **`sync`** method of `Freud`, which does the same thing.
+
+#### Why all this trouble?
+Because of the way `react-side-effect` works, `Freud` cannot know if the properties encountered until now are complete or something is missing. So if I sync head *every time* a `Freud` tag is rendered, I could unmount some tag which is required by a `Freud` tag deeper in the render tree.
+In particular, by doing this `Freud` works fine with server-side rendering.
+On the serve, use the amazing `rewind()` function to get the tags to put in your `head`.
 ```js
 import Freud from 'freud';
 
@@ -82,6 +90,19 @@ sendResponseBody(
 
 ```
 _It's actually **required** to use `rewind()` on server-side to avoid memory leaks._ See [react-side-effect](https://github.com/gaearon/react-side-effect) documentation.
+
+If you rehydrate your React app client-side, you should call `Freud.sync()` after the app gets re-rendered.
+
+A good place is the `ReactDOM.render()` callback:
+```js
+ReactDOM.render(
+	<App />,
+	document.getElementById("app-root"),
+	() => Freud.sync()
+);
+```
+
+Which is called every time the `App` component is updated. If during the lifecycle of your app some components dynamically render `Freud` tags, remember to call `Freud.sync()`.
 
 ## Contribution
 Typical `npm` workflow:
