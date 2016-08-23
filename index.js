@@ -7,11 +7,10 @@ import React from 'react';
 
 const getNodes = (tagType) =>
 	Array.prototype.slice.call(document.querySelectorAll(`${tagType}[data-freud]`));
+const areEqual = (repr, node) =>
+	Object.keys(repr).reduce((prev, prop) => prev && repr[prop] === node.getAttribute(prop), true);
 
 const syncNodes = (tagType, newTagsRepresentation = []) => {
-	const areEqual = (repr, node) =>
-		Object.keys(repr).reduce((prev, prop) => prev && repr[prop] === node.getAttribute(prop), true);
-
 	/* remove old tags */
 	getNodes(tagType).forEach((mountedNode) => {
 		const found = newTagsRepresentation.some((newTag) =>
@@ -42,16 +41,13 @@ const reduceTitle = (state) => {
 	return newTitle ? (state.titleTemplate || '%s').replace(/%s/, newTitle) : '';
 };
 
-function handleClientStateChange(state) {
-	/* so that I can override defaultTitle and titleTemplate */
-	const newState = { ...state };
-
+function syncHead(newState) {
 	/* from server rendering */
 	if (!newState.titleTemplate || !newState.defaultTitle) {
 		/* I shouldn't do this here but I can't do it anywhere else either... */
 		const titleTag = document.querySelector('title');
-		newState.defaultTitle = titleTag.getAttribute('data-default-title');
-		newState.titleTemplate = titleTag.getAttribute('data-title-template');
+		newState.defaultTitle = titleTag.getAttribute('data-freud-default-title');
+		newState.titleTemplate = titleTag.getAttribute('data-freud-title-template');
 	}
 
 	document.title = reduceTitle(newState) || document.title;
@@ -59,6 +55,26 @@ function handleClientStateChange(state) {
 	syncNodes('script', newState.scripts);
 	syncNodes('link', newState.links);
 	syncNodes('meta', newState.metas);
+}
+
+let lastState = null;
+function handleClientStateChange(state) {
+	/* so that I can override defaultTitle and titleTemplate */
+	const newState = { ...state };
+
+	if (newState.syncHere === true) {
+		syncHead(newState);
+	}
+
+	/* callback */
+	if (newState.onHeadStateChange) {
+		if (!Array.isArray(newState.onHeadStateChange)) {
+			newState.onHeadStateChange = [ newState.onHeadStateChange ];
+		}
+		newState.onHeadStateChange.forEach(callback => callback(newState));
+	}
+
+	lastState = newState;
 }
 
 const buildAttrsString = (obj) =>
@@ -75,8 +91,8 @@ const renderTags = (type, objs, selfClosing = true) => () => {
 
 function mapStateOnServer(state) {
 	const titleAttrs = {
-		'data-default-title': state.defaultTitle || '',
-		'data-title-template': state.titleTemplate || ''
+		'data-freud-default-title': state.defaultTitle || '',
+		'data-freud-title-template': state.titleTemplate || ''
 	};
 	return {
 		title: { toString: () => `<title ${buildAttrsString(titleAttrs)}>${escapeHTML(reduceTitle(state) || '')}</title>` },
@@ -92,7 +108,10 @@ function reducePropsToState(propsList) {
 		const arrays = {};
 		for (let attr in prev) {
 			if (Array.isArray(prev[attr]) && next[attr]) {
-				arrays[attr] = R.uniq([ ...prev[attr], ...(Array.isArray(next[attr]) ? next[attr] : []) ]);
+				arrays[attr] = R.uniq([
+					...prev[attr],
+					...(Array.isArray(next[attr]) ? next[attr] : [])
+				]);
 			}
 		}
 		/* merge other attributes */
@@ -104,8 +123,18 @@ function reducePropsToState(propsList) {
 	});
 }
 
-export default withSideEffect(
-	reducePropsToState,
-	handleClientStateChange,
-	mapStateOnServer
-)(() => null);
+const prepare = (Component) => {
+	Component.displayName = 'Freud';
+	Component.sync = () => syncHead(lastState);
+	return Component;
+};
+
+export default prepare(
+	withSideEffect(
+		reducePropsToState,
+		handleClientStateChange,
+		mapStateOnServer
+	)(
+		() => null
+	)
+);
