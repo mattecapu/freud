@@ -17,6 +17,7 @@ class Test extends React.PureComponent {
 	render() {
 		return (
 			<div>
+				{this.state.step}
 				{"Title should be 'Interpretation of dreams'"}
 				<Freud title="Interpretation of dreams" />
 				<br/>
@@ -36,8 +37,7 @@ class Test extends React.PureComponent {
 				]} />
 				<br/>
 
-				{this.state.step === 0 ? <button onClick={() => {Freud.sync()}}>{"sync head with sync()"}</button> : null}
-				{this.state.step === 1 ? <button onClick={this.handleClick}>{"sync head with syncHere=true"}</button> : null}
+				{this.state.step === 0 ? <button onClick={() => {Freud.sync()}}>{"sync head with sync()"}</button> : <Freud syncHere={true} />}
 			</div>
 		);
 	}
