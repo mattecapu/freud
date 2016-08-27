@@ -1,9 +1,10 @@
 import R from 'ramda';
-import withSideEffect from 'react-side-effect';
+import React from 'react';
 
 import escapeHTML from 'escape-html';
+import 'setimmediate';
 
-import React from 'react';
+import withSideEffect from 'react-side-effect';
 
 const getNodes = (tagType) =>
 	Array.prototype.slice.call(document.querySelectorAll(`${tagType}[data-freud]`));
@@ -52,9 +53,9 @@ function syncHead(newState) {
 
 	document.title = reduceTitle(newState) || document.title;
 
-	syncNodes('script', newState.scripts);
-	syncNodes('link', newState.links);
-	syncNodes('meta', newState.metas);
+	setImmediate(syncNodes, 'script', newState.scripts);
+	setImmediate(syncNodes, 'link', newState.links);
+	setImmediate(syncNodes, 'meta', newState.metas);
 }
 
 let lastState = null;
