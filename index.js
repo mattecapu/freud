@@ -133,7 +133,7 @@ function reducePropsToState(propsList) {
 
 const prepare = (Component) => {
 	Component.displayName = 'Freud';
-	Component.sync = () => syncHead(lastState);
+	Component.sync = () => lastState && syncHead(lastState);
 	return Component;
 };
 
