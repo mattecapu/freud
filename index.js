@@ -59,6 +59,10 @@ function syncHead(newState) {
 
 let lastState = null;
 function handleClientStateChange(state) {
+	if (R.equals(lastState, state)) {
+		return;
+	}
+
 	/* so that I can override defaultTitle and titleTemplate */
 	const newState = { ...state };
 
