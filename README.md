@@ -5,7 +5,7 @@ Freud is an `head` manager for React applications. It supports server-rendering 
 
 Freud is inspired by [react-helmet](https://github.com/nfl/react-helmet), but it's a far simpler implementation (which is largely possible thanks to the awesome [react-side-effect](https://github.com/gaearon/react-side-effect)).
 
-# Example
+## Example
 ```js
 import React from 'react';
 import Freud form 'freud';
