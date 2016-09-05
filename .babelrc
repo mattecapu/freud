@@ -1,6 +1,7 @@
 {
 	"presets": ["es2015"],
 	"plugins": [
+		"ramda",
 		"add-module-exports",
 		"transform-object-rest-spread",
 		"syntax-jsx",

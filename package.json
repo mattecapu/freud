@@ -51,6 +51,7 @@
   "devDependencies": {
     "babel-cli": "6.11.4",
     "babel-plugin-add-module-exports": "0.2.1",
+    "babel-plugin-ramda": "1.1.6",
     "babel-plugin-syntax-jsx": "6.13.0",
     "babel-plugin-transform-object-rest-spread": "6.8.0",
     "babel-plugin-transform-react-display-name": "6.8.0",
