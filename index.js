@@ -58,7 +58,14 @@ function syncHead(newState) {
 	setImmediate(syncNodes, 'meta', newState.metas);
 }
 
-let lastState = null;
+const defaultState = {
+	title: '',
+	scripts: [],
+	links: [],
+	metas: []
+};
+let lastState = defaultState;
+
 function handleClientStateChange(state) {
 	if (R.equals(lastState, state)) {
 		return;
@@ -95,6 +102,10 @@ const renderTags = (type, objs, selfClosing = true) => () => {
 };
 
 function mapStateOnServer(state) {
+	if (!state) {
+		state = defaultState;
+	}
+
 	const titleAttrs = {
 		'data-freud-default-title': state.defaultTitle || '',
 		'data-freud-title-template': state.titleTemplate || ''
