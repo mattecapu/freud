@@ -6,7 +6,7 @@ Freud is an `head` manager for React applications. It supports server-rendering 
 Freud is inspired by [react-helmet](https://github.com/nfl/react-helmet), but it's a far simpler implementation (which is largely possible thanks to the awesome [react-side-effect](https://github.com/gaearon/react-side-effect)).
 
 ## Example
-```js
+```jsx
 import React from 'react';
 import Freud form 'freud';
 
@@ -61,12 +61,21 @@ It's just a normal component which renders to `null` but does some magic at rend
 To do the actual modifications to `head` there are two options:
 * Use the **`syncHere`** attribute on a `Freud` tag (see example). When this component is rendered, the `head` state will be synced with all the options set **until now**. So use this only if you want to force some rendering or you are 100% sure this is the last `Freud` tag that is rendered
 * Use the **`sync`** method of `Freud`, which does the same thing.
+* Use **withFreudSync** HoC component which automatically calls `Freud.sync()` whenever its children change. This is the most effective way, especially if you're using routing: just wrap your top components with it:
+```jsx
+import { withFreudSync } from 'react-freud';
+
+<Router>
+	<Route component={withFreudSync(MyComponent)} path="/foo" />
+	<Route component={withFreudSync(MyOtherComponent)} path="/bar" />
+</Router>
+```
 
 #### Why all this trouble?
 Because of the way `react-side-effect` works, `Freud` cannot know if the properties encountered until now are complete or something is missing. So if I sync head *every time* a `Freud` tag is rendered, I could unmount some tag which is required by a `Freud` tag deeper in the render tree.
 In particular, by doing this `Freud` works fine with server-side rendering.
 On the serve, use the amazing `rewind()` function to get the tags to put in your `head`.
-```js
+```jsx
 import Freud from 'freud';
 
 const html = ReactDOM.renderToStaticMarkup(<MyAppContainer />);
@@ -94,7 +103,7 @@ _It's actually **required** to use `rewind()` on server-side to avoid memory lea
 If you rehydrate your React app client-side, you should call `Freud.sync()` after the app gets re-rendered.
 
 A good place is the `ReactDOM.render()` callback:
-```js
+```jsx
 ReactDOM.render(
 	<App />,
 	document.getElementById("app-root"),
