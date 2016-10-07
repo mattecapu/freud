@@ -1,6 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Freud from '../index.js';
+
+import withWatching from 'react-watch';
+
+import Freud, { withFreudSync } from '../index.js';
 
 class Test extends React.PureComponent {
 	constructor() {
@@ -43,6 +46,8 @@ class Test extends React.PureComponent {
 	}
 }
 
+Test = withFreudSync(withWatching(Test));
+
 window.addEventListener(
 	'DOMContentLoaded',
 	() =>
@@ -51,7 +56,6 @@ window.addEventListener(
 			document.getElementById('react-root'),
 			() => {
 				console.log('render');
-				Freud.sync();
 			}
 		)
 );

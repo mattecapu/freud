@@ -148,7 +148,7 @@ const prepare = (Component) => {
 	return Component;
 };
 
-export default prepare(
+export const Freud = prepare(
 	withSideEffect(
 		reducePropsToState,
 		handleClientStateChange,
@@ -157,3 +157,22 @@ export default prepare(
 		() => null
 	)
 );
+
+export const withFreudSync = (WrappedComponent) =>
+	class WithFreudSync extends React.Component {
+		static displayName =
+			`WithFreudSync(${WrappedComponent.name || WrappedComponent.displayName})`;
+
+		componentDidMount() {
+			Freud.sync();
+		}
+		componentDidUpdate() {
+			Freud.sync();
+		}
+
+		render() {
+			return React.createElement(WrappedComponent, this.props);
+		}
+	};
+
+export default Freud;
